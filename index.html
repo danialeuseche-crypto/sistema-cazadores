@@ -42,7 +42,7 @@
             text-transform: uppercase;
         }
 
-        /* MENÚ LATERAL IZQUIERDO */
+        /* MENÚ LATERAL IZQUIERDO (ESCRITORIO) */
         .sidebar {
             width: 280px;
             background-color: #0d1321;
@@ -51,6 +51,7 @@
             display: flex;
             flex-direction: column;
             padding: 10px;
+            flex-shrink: 0;
         }
         .menu-btn {
             background: none; border: 1px solid transparent; color: #9ca3af;
@@ -108,8 +109,8 @@
         /* ESTANTERÍA VISUAL */
         .grid-historias {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
             padding-top: 15px;
         }
         .tarjeta-historia {
@@ -120,12 +121,12 @@
             border-color: #00d2ff; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); transform: translateY(-5px);
         }
         .portada-historia {
-            width: 100%; height: 220px; background-color: #0d1321; display: flex;
+            width: 100%; height: 180px; background-color: #0d1321; display: flex;
             justify-content: center; align-items: center; padding: 15px; text-align: center;
             border-bottom: 2px solid #00d2ff;
         }
-        .portada-historia h3 { font-size: 1em; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase; word-wrap: break-word; }
-        .info-historia { padding: 12px; font-size: 0.8em; }
+        .portada-historia h3 { font-size: 0.9em; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase; word-wrap: break-word; }
+        .info-historia { padding: 10px; font-size: 0.75em; }
         .info-historia p { margin-bottom: 4px; color: #9ca3af; }
         .info-historia strong { color: #e2e8f0; }
 
@@ -162,34 +163,89 @@
             box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
         }
         .cabecera-pergamino { padding: 20px; border-bottom: 1px dashed #374151; position: relative; }
-        .cabecera-pergamino h2 { color: #fff; font-size: 1.5em; margin-bottom: 5px; text-transform: uppercase; }
-        .cabecera-pergamino p { color: #00d2ff; font-size: 0.9em; }
+        .cabecera-pergamino h2 { color: #fff; font-size: 1.3em; margin-bottom: 5px; text-transform: uppercase; }
+        .cabecera-pergamino p { color: #00d2ff; font-size: 0.85em; }
         .btn-cerrar-lectura {
             position: absolute; top: 20px; right: 20px; background: none; border: 1px solid #ff0055;
             color: #ff0055; padding: 5px 12px; cursor: pointer; font-family: inherit; font-weight: bold;
             border-radius: 4px; transition: all 0.3s;
         }
         .btn-cerrar-lectura:hover { background-color: #ff0055; color: #0b0f19; box-shadow: 0 0 10px #ff0055; }
-        .cuerpo-pergamino { padding: 25px; overflow-y: auto; font-size: 1.1em; line-height: 1.8; color: #e2e8f0; white-space: pre-wrap; }
+        .cuerpo-pergamino { padding: 25px; overflow-y: auto; font-size: 1.05em; line-height: 1.7; color: #e2e8f0; white-space: pre-wrap; }
+
+        /* 📱 PARCHE MAGNÍFICO PARA TELÉFONOS MÓVILES (RESPONSIVE) 📱 */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* Cambia de lado a lado a arriba y abajo */
+                overflow: auto;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 2px solid #00d2ff;
+                padding: 10px;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+                box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2);
+                overflow-x: auto; /* Permite arrastrar el menú hacia los lados si no cabe */
+                display: block; /* Para el scroll horizontal */
+                white-space: nowrap;
+            }
+            .logo-contenedor {
+                display: inline-flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                padding: 5px;
+                margin-bottom: 0;
+                border-bottom: none;
+                margin-right: 15px;
+                vertical-align: middle;
+            }
+            .logo-subtexto { margin-top: 0; font-size: 0.55em; }
+            .menu-separador { display: none; } /* Borra las líneas divisorias estorbosas */
+            
+            .menu-btn {
+                display: inline-block; /* Pone los botones en fila horizontal */
+                width: auto;
+                margin-bottom: 0;
+                margin-right: 8px;
+                padding: 8px 12px;
+                font-size: 0.8em;
+                vertical-align: middle;
+            }
+            .main-content {
+                padding: 15px;
+                overflow-y: visible;
+                flex: none;
+            }
+            .caja-sistema { padding: 15px; }
+            .timer-mazmorra {
+                float: none;
+                display: block;
+                margin-bottom: 8px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- MENÚ LATERAL IZQUIERDO -->
+    <!-- MENÚ LATERAL QUE SE CONVIERTE EN BARRA SUPERIOR EN MÓVIL -->
     <div class="sidebar">
         <div class="logo-contenedor">
             <div class="logo-texto">⚡ S.C.L ⚡</div>
             <div class="logo-subtexto">Gremio Alfa</div>
         </div>
-        <button class="menu-btn activo" onclick="navegarA('secUsuario')">👤 Estado del Cazador</button>
-        <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gestión de Gremio</button>
+        <button class="menu-btn activo" onclick="navegarA('secUsuario')">👤 Perfil</button>
+        <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gremio</button>
         <div class="menu-separador"></div>
-        <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Repertorio General</button>
-        <button class="menu-btn" onclick="navegarA('secCazadores')">🏹 Radar de Cazadores</button>
-        <button class="menu-btn" onclick="navegarA('secEscribir')">✍️ Inyectar Manuscrito</button>
+        <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Estantería</button>
+        <button class="menu-btn" onclick="navegarA('secEscribir')">✍️ Publicar</button>
         <div class="menu-separador"></div>
-        <button class="menu-btn" onclick="navegarA('secMazmorras')">⚔️ Portales de Incursión</button>
-        <button class="menu-btn" onclick="navegarA('secMusica')">🎵 Aura de Concentración</button>
+        <button class="menu-btn" onclick="navegarA('secMazmorras')">⚔️ Mazmorras</button>
+        <button class="menu-btn" onclick="navegarA('secMusica')">🎵 Aura</button>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -240,14 +296,6 @@
             </div>
         </div>
 
-        <div id="secCazadores" class="seccion-panel">
-            <div class="caja-sistema">
-                <h2>🏹 DIRECTORIO PÚBLICO DE CAZADORES</h2>
-                <input type="text" id="buscadorCazadorInput" onkeyup="buscarCazadores()" placeholder="Rastrear alias de cazador...">
-                <div id="listaCazadores"></div>
-            </div>
-        </div>
-
         <div id="secEscribir" class="seccion-panel">
             <div class="caja-sistema">
                 <h2>📜 INYECTAR NUEVA ENTRADA PÚBLICA</h2>
@@ -264,7 +312,6 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DE MAZMORRAS ACTUALIZADA -->
         <div id="secMazmorras" class="seccion-panel">
             <div class="caja-sistema">
                 <h2>👁️ ACCESO A PORTALES DE INCURSIÓN ACTIVOS (7 PORTALES)</h2>
