@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE CAZADORES LITERARIOS</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* CONTENEDOR DEL LOGO (NUEVO) */
+        .logo-contenedor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #374151;
+        }
+        /* Logo estilo Emblema Neón */
+        .logo-texto {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00d2ff;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.6), 0 0 20px rgba(0, 210, 255, 0.3);
+            letter-spacing: 2px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .logo-subtexto {
+            font-size: 0.65em;
+            color: #ffaa00;
+            letter-spacing: 4px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+        /* Por si en el futuro quieres usar una imagen, descomenta esto en tu CSS:
+        .logo-img { width: 80px; height: auto; margin-bottom: 8px; } 
+        */
+
+        /* MENÚ LATERAL IZQUIERDO */
+        .sidebar {
+            width: 280px;
+            background-color: #0d1321;
+            border-right: 2px solid #00d2ff;
+            box-shadow: 5px 0 15px rgba(0, 210, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+        .menu-btn {
+            background: none; border: 1px solid transparent; color: #9ca3af;
+            padding: 12px; text-align: left; font-family: inherit; cursor: pointer;
+            border-radius: 4px; margin-bottom: 8px; transition: all 0.3s; width: 100%;
+            font-size: 0.9em;
+        }
+        .menu-btn:hover, .menu-btn.activo {
+            color: #00d2ff; border-color: #00d2ff; background-color: #111827;
+            box-shadow: 0 0 8px rgba(0, 210, 255, 0.3);
+        }
+        .menu-separador { height: 1px; background: #1f2937; margin: 15px 5px; }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .seccion-panel { display: none; }
+        .seccion-panel.activa { display: block; }
+
+        /* COMPONENTES VISUALES */
+        .caja-sistema {
+            border: 2px solid #00d2ff; background-color: #111827;
+            padding: 20px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .caja-sistema h2 {
+            font-size: 1.3em; color: #00d2ff; margin-bottom: 15px;
+            border-bottom: 1px dashed #374151; padding-bottom: 8px;
+        }
+        .stats-cazador {
+            background-color: #1f2937; padding: 15px; border-radius: 5px;
+            border-left: 4px solid #00d2ff; margin-bottom: 15px;
+        }
+        .bloqueado { border-left-color: #ff0055; opacity: 0.5; }
+        
+        /* FORMULARIOS */
+        label { display: block; margin-bottom: 6px; font-size: 0.9em; color: #9ca3af; font-weight: bold; }
+        input, textarea, select {
+            width: 100%; padding: 10px; background-color: #05070b;
+            border: 1px solid #374151; color: #e2e8f0; font-family: inherit;
+            border-radius: 4px; margin-bottom: 15px; box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #00d2ff; outline: none; }
+
+        button.action-btn {
+            background-color: #002b47; color: #00d2ff; border: 1px solid #00d2ff;
+            padding: 12px 15px; font-family: inherit; font-weight: bold;
+            cursor: pointer; border-radius: 4px; width: 100%; transition: all 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        button.action-btn:hover { background-color: #00d2ff; color: #0b0f19; box-shadow: 0 0 10px #00d2ff; }
+        
+        #pantallaLogs {
+            background-color: #05070b; padding: 10px; border: 1px dashed #00d2ff;
+            color: #00d2ff; font-size: 0.85em; border-radius: 4px; margin-top: 20px;
+        }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 0.75em; font-weight: bold; margin-right: 5px; text-transform: uppercase; }
+        .badge-rol { background-color: #311042; color: #d946ef; border: 1px solid #d946ef; }
+
+        /* ESTANTERÍA VISUAL */
+        .grid-historias {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding-top: 15px;
+        }
+        .tarjeta-historia {
+            background-color: #1f2937; border-radius: 8px; overflow: hidden;
+            border: 1px solid #374151; transition: all 0.3s ease; cursor: pointer;
+        }
+        .tarjeta-historia:hover {
+            border-color: #00d2ff; box-shadow: 0 0 15px rgba(0, 210, 255, 0.4); transform: translateY(-5px);
+        }
+        .portada-historia {
+            width: 100%; height: 220px; background-color: #0d1321; display: flex;
+            justify-content: center; align-items: center; padding: 15px; text-align: center;
+            border-bottom: 2px solid #00d2ff;
+        }
+        .portada-historia h3 { font-size: 1em; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase; word-wrap: break-word; }
+        .info-historia { padding: 12px; font-size: 0.8em; }
+        .info-historia p { margin-bottom: 4px; color: #9ca3af; }
+        .info-historia strong { color: #e2e8f0; }
+
+        .portada-fantasia { background: linear-gradient(135deg, #0b0f19 0%, #311042 100%); border-color: #d946ef; }
+        .portada-terror { background: linear-gradient(135deg, #0b0f19 0%, #ff0055 100%); border-color: #ff0055; }
+        .portada-accion { background: linear-gradient(135deg, #0b0f19 0%, #ffaa00 100%); border-color: #ffaa00; }
+        .portada-fanfiction { background: linear-gradient(135deg, #0b0f19 0%, #00d2ff 100%); border-color: #00d2ff; }
+    </style>
+</head>
+<body>
+
+    <!-- MENÚ LATERAL IZQUIERDO CON LOGO -->
+    <div class="sidebar">
+        <!-- SECCIÓN DEL LOGO -->
+        <div class="logo-contenedor">
+            <!-- <img src="logo.png" class="logo-img" alt="Logo"> -->
+            <div class="logo-texto">⚡ S.C.L ⚡</div>
+            <div class="logo-subtexto">Gremio Alfa</div>
+        </div>
+
+        <button class="menu-btn activo" onclick="navegarA('secUsuario')">👤 Estado del Cazador</button>
+        <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gestión de Gremio</button>
+        
+        <div class="menu-separador"></div>
+        
+        <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Repertorio de Obras</button>
+        <button class="menu-btn" onclick="navegarA('secCazadores')">🏹 Radar de Cazadores</button>
+        <button class="menu-btn" onclick="navegarA('secEscribir')">✍️ Inyectar Manuscrito</button>
+        
+        <div class="menu-separador"></div>
+        
+        <button class="menu-btn" onclick="navegarA('secMazmorras')">⚔️ Portales de Incursión</button>
+        <button class="menu-btn" onclick="navegarA('secMusica')">🎵 Aura de Concentración</button>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-content">
+        <!-- El resto de las pestañas se mantienen igual de funcionales -->
+        <div id="secUsuario" class="seccion-panel activa">
+            <div class="caja-sistema">
+                <h2>REGISTRO DE PODER ACTUAL</h2>
+                <div id="datosPerfil"></div>
+                <label>Selecciona tu Rol de Combate (Clase Anime):</label>
+                <select id="selectorRol" onchange="cambiarRol()">
+                    <option value="Luchador">Luchador (Cuerpo a Cuerpo / Balanceado)</option>
+                    <option value="Asesino">Asesino (Velocidad / Daño Crítico)</option>
+                    <option value="Tipo Hechicero">Tipo Hechicero (Lanzador de Conjuros / Runas)</option>
+                    <option value="Invocador">Invocador (Control de Sombras / Bestias)</option>
+                    <option value="Tanque">Tanque (Defensa Absoluta / Escudos)</option>
+                </select>
+                <button class="action-btn" id="btnDespertar">🔄 Ejecutar Despertar de Rango Aleatorio</button>
+            </div>
+        </div>
+
+        <div id="secGremio" class="seccion-panel">
+            <div class="caja-sistema">
+                <h2>🛡️ GESTIÓN DE AFILIACIÓN DE GREMIO</h2>
+                <label>Gremio Activo:</label>
+                <select id="selectorGremio" onchange="cambiarGremio()">
+                    <option value="Ninguno">— Independiente —</option>
+                    <option value="Gremio Colmillo Blanco">Colmillo Blanco (Terror/Dark)</option>
+                    <option value="Gremio Cazadores de Almas">Cazadores de Almas (Fanfiction)</option>
+                    <option value="Gremio Puño de Oro">Puño de Oro (Acción/Marcial)</option>
+                </select>
+                <div id="infoGremioDetalle" style="font-size: 0.85em; color: #00d2ff; padding: 10px; background: #05070b; border-radius: 4px;"></div>
+            </div>
+        </div>
+
+        <div id="secCatalogo" class="seccion-panel">
+            <div class="caja-sistema">
+                <h2>📚 REPERTORIO VISUAL DE CAZADORES (MENÚ)</h2>
+                <label>Filtrar y Clasificar Obras:</label>
+                <select id="filtroEstilo" onchange="filtrarHistorias()">
+                    <option value="Todos">Ver Todos los Apartados</option>
+                    <option value="Fantasía Oscura">Apartado: Fantasía Oscura</option>
+                    <option value="Terror / Horror">Apartado: Terror / Horror</option>
+                    <option value="Acción / Marcial">Apartado: Acción / Marcial</option>
+                    <option value="Fanfiction">Apartado: Fanfiction</option>
+                </select>
+                <div class="menu-separador"></div>
+                <div id="estanteriaVisual" class="grid-historias"></div>
+            </div>
+        </div>
+
+        <div id="secCazadores" class="seccion-panel">
+            <div class="caja-sistema">
+                <h2>🏹 DIRECTORIO PÚBLICO DE CAZADORES</h2>
+                <input type="text" id="buscadorCazadorInput" onkeyup="buscarCazadores()" placeholder="Rastrear alias de cazador...">
+                <div id="listaCazadores"></div>
+            </div>
+        </div>
+
+        <div id="secEscribir" class="seccion-panel">
+            <div class="caja-sistema">
+                <h2>📜 INYECTAR NUEVA ENTRADA AL TABLÓN</h2>
+                <input type="text" id="tituloHistoria" placeholder="Título del relato...">
+                <label>Estilo / Categoría Principal:</label>
+                <select id="estiloHistoria">
+                    <option value="Fantasía Oscura">Fantasía Oscura</option>
+                    <option value="Terror / Horror">Terror / Horror</option>
+                    <option value="Acción / Marcial">Acción / Marcial</option>
+                    <option value="Fanfiction">Fanfiction</option>
+                </select>
+                <textarea id="contenidoHistoria" rows="6" placeholder="Redacta las líneas de tu obra aquí..."></textarea>
+                <button class="action-btn" id="btnPublicar">🚀 Publicar Obra en la Estantería (+15 EXP)</button>
+            </div>
+        </div>
+
+        <div id="secMazmorras" class="seccion-panel">
+            <div class="caja-sistema">
+                <h2>👁️ RADAR DE CONVOCATORIAS ACTIVAS</h2>
+                <div id="tablonMazmorras"></div>
+            </div>
+        </div>
+
+        <div id="secMusica" class="seccion-panel">
+            <div class="caja-sistema">
+                <h2>🎵 ENERGÍA ACÚSTICA DE CONCENTRACIÓN</h2>
+                <audio id="reproductorAura" controls loop style="width: 100%;">
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
+
+        <div id="pantallaLogs">⚠️ [SISTEMA] Interfaz sincronizada con la estantería rúnica.</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
