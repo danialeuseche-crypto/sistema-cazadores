@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA DE CAZADORES LITERARIOS</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="S.C.L">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -100,6 +102,9 @@
             text-transform: uppercase; letter-spacing: 1px;
         }
         button.action-btn:hover { background-color: #00d2ff; color: #0b0f19; box-shadow: 0 0 10px #00d2ff; }
+        button.action-btn:disabled {
+            background-color: #111827; color: #4b5563; border-color: #374151; cursor: not-allowed; box-shadow: none;
+        }
         
         #pantallaLogs {
             background-color: #05070b; padding: 10px; border: 1px dashed #00d2ff;
@@ -133,9 +138,9 @@
         .portada-fantasia { background: linear-gradient(135deg, #0b0f19 0%, #311042 100%); border-color: #d946ef; }
         .portada-terror { background: linear-gradient(135deg, #0b0f19 0%, #ff0055 100%); border-color: #ff0055; }
         .portada-accion { background: linear-gradient(135deg, #0b0f19 0%, #ffaa00 100%); border-color: #ffaa00; }
-        .portada-fanfiction { background: linear-gradient(135deg, #0b0f19 0%, #00d2ff 100%); border-color: #00d2ff; }
+        .portada-fanfiction { background: linear-gradient(135deg, #00d2ff 0%, #0d1321 100%); border-color: #00d2ff; }
 
-        /* MAZMORRAS Y RESTRICCIONES */
+        /* MAZMORRAS */
         .tarjeta-mazmorra {
             border: 1px dashed #374151; background:#111827; padding:15px; margin-bottom:15px; border-radius:6px;
             transition: all 0.3s; position: relative;
@@ -146,7 +151,6 @@
         
         .timer-mazmorra { font-weight: bold; color: #00d2ff; font-size: 0.9em; float: right; }
         .badge-rango { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; font-weight: bold; margin-right: 10px; background: #05070b; border: 1px solid #9ca3af; }
-        
         .cronicas-contenedor { margin-top: 15px; background: #05070b; padding: 10px; border-radius: 4px; display: none; border-top: 1px dashed #374151;}
         .tarjeta-mazmorra.abierta-detalles .cronicas-contenedor { display: block; }
 
@@ -173,73 +177,50 @@
         .btn-cerrar-lectura:hover { background-color: #ff0055; color: #0b0f19; box-shadow: 0 0 10px #ff0055; }
         .cuerpo-pergamino { padding: 25px; overflow-y: auto; font-size: 1.05em; line-height: 1.7; color: #e2e8f0; white-space: pre-wrap; }
 
-        /* 📱 PARCHE MAGNÍFICO PARA TELÉFONOS MÓVILES (RESPONSIVE) 📱 */
+        /* ESTILOS DE LA REPRODUCCIÓN DE MÚSICA */
+        .item-cancion {
+            background-color: #05070b; padding: 10px; margin-bottom: 8px; border-radius: 4px;
+            border: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center;
+        }
+        .item-cancion.sonando { border-color: #ffaa00; background-color: #111827; }
+
+        /* 📱 ESTILOS OPTIMIZADOS PARA DISPOSITIVOS MÓVILES 📱 */
         @media (max-width: 768px) {
-            body {
-                flex-direction: column; /* Cambia de lado a lado a arriba y abajo */
-                overflow: auto;
-            }
+            body { flex-direction: column; overflow: auto; }
             .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 2px solid #00d2ff;
-                padding: 10px;
-                position: sticky;
-                top: 0;
-                z-index: 999;
-                box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2);
-                overflow-x: auto; /* Permite arrastrar el menú hacia los lados si no cabe */
-                display: block; /* Para el scroll horizontal */
-                white-space: nowrap;
+                width: 100%; height: auto; border-right: none; border-bottom: 2px solid #00d2ff;
+                padding: 10px; position: sticky; top: 0; z-index: 999;
+                box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2); overflow-x: auto;
+                display: block; white-space: nowrap;
             }
             .logo-contenedor {
-                display: inline-flex;
-                flex-direction: row;
-                align-items: center;
-                gap: 10px;
-                padding: 5px;
-                margin-bottom: 0;
-                border-bottom: none;
-                margin-right: 15px;
-                vertical-align: middle;
+                display: inline-flex; flex-direction: row; align-items: center;
+                gap: 10px; padding: 5px; margin-bottom: 0; border-bottom: none;
+                margin-right: 15px; vertical-align: middle;
             }
             .logo-subtexto { margin-top: 0; font-size: 0.55em; }
-            .menu-separador { display: none; } /* Borra las líneas divisorias estorbosas */
+            .menu-separador { display: none; }
             
             .menu-btn {
-                display: inline-block; /* Pone los botones en fila horizontal */
-                width: auto;
-                margin-bottom: 0;
-                margin-right: 8px;
-                padding: 8px 12px;
-                font-size: 0.8em;
-                vertical-align: middle;
+                display: inline-block; width: auto; margin-bottom: 0;
+                margin-right: 8px; padding: 8px 12px; font-size: 0.8em; vertical-align: middle;
             }
-            .main-content {
-                padding: 15px;
-                overflow-y: visible;
-                flex: none;
-            }
+            .main-content { padding: 15px; overflow-y: visible; flex: none; }
             .caja-sistema { padding: 15px; }
-            .timer-mazmorra {
-                float: none;
-                display: block;
-                margin-bottom: 8px;
-            }
+            .timer-mazmorra { float: none; display: block; margin-bottom: 8px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- MENÚ LATERAL QUE SE CONVIERTE EN BARRA SUPERIOR EN MÓVIL -->
+    <!-- BARRA DE MENÚ SUPERIOR/LATERAL -->
     <div class="sidebar">
         <div class="logo-contenedor">
             <div class="logo-texto">⚡ S.C.L ⚡</div>
             <div class="logo-subtexto">Gremio Alfa</div>
         </div>
         <button class="menu-btn activo" onclick="navegarA('secUsuario')">👤 Perfil</button>
-        <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gremio</button>
+        <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gremios</button>
         <div class="menu-separador"></div>
         <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Estantería</button>
         <button class="menu-btn" onclick="navegarA('secEscribir')">✍️ Publicar</button>
@@ -250,8 +231,25 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="main-content">
+        <!-- 👤 PANEL DE USUARIO -->
         <div id="secUsuario" class="seccion-panel activa">
             <div class="caja-sistema">
+                <h2>REGISTRO OBLIGATORIO DE CAZADOR</h2>
+                <div style="margin-bottom: 15px;">
+                    <label>Alias Público:</label>
+                    <input type="text" id="regAlias" placeholder="Tu apodo de escritor...">
+                    
+                    <label>Correo Electrónico:</label>
+                    <input type="email" id="regCorreo" placeholder="ejemplo@gremio.com">
+                    
+                    <label>Número de Teléfono:</label>
+                    <input type="tel" id="regTelefono" placeholder="+58 412...">
+                    
+                    <label>Edad:</label>
+                    <input type="number" id="regEdad" placeholder="Tu edad..." min="1">
+                </div>
+                <button class="action-btn" style="margin-bottom: 20px; background-color: #052e16; border-color: #22c55e; color: #22c55e;" onclick="guardarDatosRegistro()">💾 Guardar Credenciales Rúnicas</button>
+                
                 <h2>REGISTRO DE PODER ACTUAL</h2>
                 <div id="datosPerfil"></div>
                 <label>Selecciona tu Rol de Combate:</label>
@@ -262,35 +260,64 @@
                     <option value="Invocador">Invocador (Sombras / Bestias)</option>
                     <option value="Tanque">Tanque (Defensa Absoluta)</option>
                 </select>
-                <button class="action-btn" id="btnDespertar">🔄 Ejecutar Despertar de Rango Aleatorio</button>
+                <button class="action-btn" id="btnDespertar">🔄 Ejecutar Despertar Único de Rango</button>
             </div>
         </div>
 
+        <!-- 🛡️ PANEL DE GREMIOS -->
         <div id="secGremio" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>🛡️ GESTIÓN DE AFILIACIÓN DE GREMIO</h2>
-                <label>Gremio Activo:</label>
+                <h2>🛡️ AFILIACIÓN A LOS 5 GREMIOS SUPREMOS</h2>
+                <label>Selecciona un Gremio Oficial:</label>
                 <select id="selectorGremio" onchange="cambiarGremio()">
-                    <option value="Ninguno">— Independiente —</option>
-                    <option value="Gremio Colmillo Blanco">Colmillo Blanco (Terror/Dark)</option>
-                    <option value="Gremio Cazadores de Almas">Cazadores de Almas (Fanfiction)</option>
-                    <option value="Gremio Puño de Oro">Puño de Oro (Acción/Marcial)</option>
+                    <option value="Ninguno">— Operar Independiente —</option>
+                    <option value="Gremio Colmillo Blanco">1. Colmillo Blanco (Especialistas en Terror/Dark)</option>
+                    <option value="Gremio Cazadores de Almas">2. Cazadores de Almas (Especialistas en Fanfiction)</option>
+                    <option value="Gremio Puño de Oro">3. Puño de Oro (Expertos en Acción/Marcial)</option>
+                    <option value="Gremio Eclipse Eterno">4. Eclipse Eterno (Especialistas en Fantasía Oscura)</option>
+                    <option value="Gremio Runa Sagrada">5. Runa Sagrada (Especialistas en Lore y Misterio)</option>
                 </select>
-                <div id="infoGremioDetalle" style="font-size: 0.85em; color: #00d2ff; padding: 10px; background: #05070b; border-radius: 4px;"></div>
+                <div id="infoGremioDetalle" style="font-size: 0.85em; color: #00d2ff; padding: 10px; background: #05070b; border-radius: 4px; margin-bottom: 25px;"></div>
+                
+                <h2>🔨 ALQUIMIA DE CLANES: FUNDAR TU PROPIO GREMIO</h2>
+                <div style="margin-top: 15px;">
+                    <label>Nombre de tu nuevo Gremio:</label>
+                    <input type="text" id="nombreGremioPropio" placeholder="Escribe el nombre de tu clan...">
+                    <button class="action-btn" id="btnCrearGremio" onclick="fundarGremioPropio()">✨ Forjar y Fundar Gremio</button>
+                </div>
+
+                <div id="panelReclutamiento" style="margin-top: 25px; display: none;">
+                    <h3>📣 CENTRO DE RECLUTAMIENTO</h3>
+                    <p style="font-size: 0.8em; color: #9ca3af; margin: 5px 0 15px 0;">¡Invita o añade miembros virtuales a las filas de tu nuevo clan!</p>
+                    <input type="text" id="nombreRecluta" placeholder="Nombre del cazador a reclutar...">
+                    <button class="action-btn" style="padding: 6px 12px; width: auto;" onclick="reclutarMiembro()">➕ Reclutar Miembro</button>
+                    <div style="margin-top: 15px;">
+                        <label>Lista de Miembros Activos:</label>
+                        <ul id="listaMiembrosGremio" style="list-style: none; background: #05070b; padding: 10px; border-radius: 4px; font-size: 0.85em; color: #00d2ff;">
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- 📚 SECCIÓN DE ESTANTERÍA -->
         <div id="secCatalogo" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>📚 REPERTORIO GENERAL DE MANUSCRITOS PUBLICOS</h2>
-                <label>Filtrar por Género:</label>
-                <select id="filtroEstilo" onchange="filtrarHistorias()">
-                    <option value="Todos">Ver Todos los Apartados</option>
-                    <option value="Fantasía Oscura">Fantasía Oscura</option>
-                    <option value="Terror / Horror">Terror / Horror</option>
-                    <option value="Acción / Marcial">Acción / Marcial</option>
-                    <option value="Fanfiction">Fanfiction</option>
-                </select>
+                <h2>📚 REPERTORIO GENERAL DE MANUSCRITOS PÚBLICOS</h2>
+                <div style="margin-bottom: 15px;">
+                    <label>🔍 Rastrear por Título o Autor:</label>
+                    <input type="text" id="buscadorObrasInput" onkeyup="filtrarYBuscarHistorias()" placeholder="Escribe el nombre de la obra o del cazador...">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label>Filtro por Género:</label>
+                    <select id="filtroEstilo" onchange="filtrarYBuscarHistorias()">
+                        <option value="Todos">Ver Todos los Apartados</option>
+                        <option value="Fantasía Oscura">Fantasía Oscura</option>
+                        <option value="Terror / Horror">Terror / Horror</option>
+                        <option value="Acción / Marcial">Acción / Marcial</option>
+                        <option value="Fanfiction">Fanfiction</option>
+                    </select>
+                </div>
                 <div class="menu-separador"></div>
                 <div id="estanteriaVisual" class="grid-historias"></div>
             </div>
@@ -312,22 +339,42 @@
             </div>
         </div>
 
+        <!-- ⚔️ SECCIÓN DE MAZMORRAS -->
         <div id="secMazmorras" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>👁️ ACCESO A PORTALES DE INCURSIÓN ACTIVOS (7 PORTALES)</h2>
-                <p style="font-size: 0.85em; color: #9ca3af; margin-bottom: 20px;">
-                    ⚠️ Las crónicas redactadas dentro de una incursión quedan selladas en esa mazmorra para siempre. Si el portal se cierra o no posees el rango de energía requerido, no podrás entrar.
-                </p>
+                <h2>👁️ PORTALES DE INCURSIÓN ACTIVOS</h2>
                 <div id="tablonMazmorras"></div>
             </div>
         </div>
 
+        <!-- 🎵 SINTONIZADOR DE AURA EXPANDIDO -->
         <div id="secMusica" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>🎵 ENERGÍA ACÚSTICA DE CONCENTRACIÓN</h2>
-                <audio id="reproductorAura" controls loop style="width: 100%;">
-                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-                </audio>
+                <h2>🎵 ENERGÍA ACÚSTICA: SINTONIZADOR DE AURA</h2>
+                <p style="font-size: 0.85em; color: #9ca3af; margin-bottom: 15px;">Selecciona una frecuencia base o inyecta tu propia corriente sonora externa.</p>
+                
+                <!-- Reproductor Base -->
+                <div style="background-color: #05070b; padding: 15px; border-radius: 6px; border: 1px solid #374151; margin-bottom: 20px;">
+                    <p style="font-size: 0.85em; margin-bottom: 8px; color: #ffaa00;">⚡ Canales de Sintonización Activa:</p>
+                    <audio id="reproductorAura" controls loop style="width: 100%; margin-bottom: 10px;"></audio>
+                    <p style="font-size: 0.8em; color: #00d2ff;" id="trackActualInfo">Ninguna melodía activa en los canales.</p>
+                </div>
+
+                <!-- Lista de Canales -->
+                <label>Lista de Frecuencias de Concentración:</label>
+                <div id="listaCanalesMusica" style="max-height: 200px; overflow-y: auto; margin-bottom: 25px; padding-right: 5px;"></div>
+
+                <!-- Formulario para agregar música -->
+                <h2>🌌 VINCULAR ENLACE DE TRANSMISIÓN EXTERNA</h2>
+                <div style="margin-top: 10px;">
+                    <label>Nombre del Registro Acústico:</label>
+                    <input type="text" id="nuevoTrackNombre" placeholder="Ej: OST Solo Leveling, LoFi Horror...">
+                    
+                    <label>URL Directa del Audio (.mp3 o enlace público):</label>
+                    <input type="text" id="nuevoTrackUrl" placeholder="https://ejemplo.com/musica.mp3">
+                    
+                    <button class="action-btn" onclick="agregarMusicaPersonalizada()">📻 Acoplar Frecuencia al Sistema</button>
+                </div>
             </div>
         </div>
 
