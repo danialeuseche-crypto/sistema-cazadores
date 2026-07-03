@@ -82,7 +82,6 @@
             background-color: #1f2937; padding: 15px; border-radius: 5px;
             border-left: 4px solid #00d2ff; margin-bottom: 15px;
         }
-        .bloqueado { border-left-color: #ff0055; opacity: 0.5; }
         
         /* FORMULARIOS */
         label { display: block; margin-bottom: 6px; font-size: 0.9em; color: #9ca3af; font-weight: bold; }
@@ -105,8 +104,6 @@
             background-color: #05070b; padding: 10px; border: 1px dashed #00d2ff;
             color: #00d2ff; font-size: 0.85em; border-radius: 4px; margin-top: 20px;
         }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 0.75em; font-weight: bold; margin-right: 5px; text-transform: uppercase; }
-        .badge-rol { background-color: #311042; color: #d946ef; border: 1px solid #d946ef; }
 
         /* ESTANTERÍA VISUAL */
         .grid-historias {
@@ -137,7 +134,22 @@
         .portada-accion { background: linear-gradient(135deg, #0b0f19 0%, #ffaa00 100%); border-color: #ffaa00; }
         .portada-fanfiction { background: linear-gradient(135deg, #0b0f19 0%, #00d2ff 100%); border-color: #00d2ff; }
 
-        /* INTERFAZ DE LECTURA REAL (NUEVO PANELES FLOTANTES) */
+        /* MAZMORRAS Y RESTRICCIONES */
+        .tarjeta-mazmorra {
+            border: 1px dashed #374151; background:#111827; padding:15px; margin-bottom:15px; border-radius:6px;
+            transition: all 0.3s; position: relative;
+        }
+        .tarjeta-mazmorra.desbloqueada { border: 1px solid #ffaa00; box-shadow: 0 0 10px rgba(255, 170, 0, 0.15); }
+        .tarjeta-mazmorra.bloqueada { opacity: 0.4; background-color: #090d16; cursor: not-allowed; }
+        .tarjeta-mazmorra.cerrada { border-color: #ff0055; opacity: 0.3; }
+        
+        .timer-mazmorra { font-weight: bold; color: #00d2ff; font-size: 0.9em; float: right; }
+        .badge-rango { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; font-weight: bold; margin-right: 10px; background: #05070b; border: 1px solid #9ca3af; }
+        
+        .cronicas-contenedor { margin-top: 15px; background: #05070b; padding: 10px; border-radius: 4px; display: none; border-top: 1px dashed #374151;}
+        .tarjeta-mazmorra.abierta-detalles .cronicas-contenedor { display: block; }
+
+        /* INTERFAZ DE LECTURA REAL Y MODALES */
         .modal-lectura {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(5, 7, 11, 0.95); z-index: 1000; justify-content: center; align-items: center;
@@ -149,9 +161,7 @@
             max-height: 85vh; border-radius: 8px; display: flex; flex-direction: column;
             box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
         }
-        .cabecera-pergamino {
-            padding: 20px; border-bottom: 1px dashed #374151; position: relative;
-        }
+        .cabecera-pergamino { padding: 20px; border-bottom: 1px dashed #374151; position: relative; }
         .cabecera-pergamino h2 { color: #fff; font-size: 1.5em; margin-bottom: 5px; text-transform: uppercase; }
         .cabecera-pergamino p { color: #00d2ff; font-size: 0.9em; }
         .btn-cerrar-lectura {
@@ -160,10 +170,7 @@
             border-radius: 4px; transition: all 0.3s;
         }
         .btn-cerrar-lectura:hover { background-color: #ff0055; color: #0b0f19; box-shadow: 0 0 10px #ff0055; }
-        .cuerpo-pergamino {
-            padding: 25px; overflow-y: auto; font-size: 1.1em; line-height: 1.8;
-            color: #e2e8f0; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace;
-        }
+        .cuerpo-pergamino { padding: 25px; overflow-y: auto; font-size: 1.1em; line-height: 1.8; color: #e2e8f0; white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -177,7 +184,7 @@
         <button class="menu-btn activo" onclick="navegarA('secUsuario')">👤 Estado del Cazador</button>
         <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gestión de Gremio</button>
         <div class="menu-separador"></div>
-        <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Repertorio de Obras</button>
+        <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Repertorio General</button>
         <button class="menu-btn" onclick="navegarA('secCazadores')">🏹 Radar de Cazadores</button>
         <button class="menu-btn" onclick="navegarA('secEscribir')">✍️ Inyectar Manuscrito</button>
         <div class="menu-separador"></div>
@@ -191,13 +198,13 @@
             <div class="caja-sistema">
                 <h2>REGISTRO DE PODER ACTUAL</h2>
                 <div id="datosPerfil"></div>
-                <label>Selecciona tu Rol de Combate (Clase Anime):</label>
+                <label>Selecciona tu Rol de Combate:</label>
                 <select id="selectorRol" onchange="cambiarRol()">
-                    <option value="Luchador">Luchador (Cuerpo a Cuerpo / Balanceado)</option>
-                    <option value="Asesino">Asesino (Velocidad / Daño Crítico)</option>
-                    <option value="Tipo Hechicero">Tipo Hechicero (Lanzador de Conjuros / Runas)</option>
-                    <option value="Invocador">Invocador (Control de Sombras / Bestias)</option>
-                    <option value="Tanque">Tanque (Defensa Absoluta / Escudos)</option>
+                    <option value="Luchador">Luchador (Cuerpo a Cuerpo)</option>
+                    <option value="Asesino">Asesino (Velocidad / Crítico)</option>
+                    <option value="Tipo Hechicero">Tipo Hechicero (Conjuros / Runas)</option>
+                    <option value="Invocador">Invocador (Sombras / Bestias)</option>
+                    <option value="Tanque">Tanque (Defensa Absoluta)</option>
                 </select>
                 <button class="action-btn" id="btnDespertar">🔄 Ejecutar Despertar de Rango Aleatorio</button>
             </div>
@@ -219,14 +226,14 @@
 
         <div id="secCatalogo" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>📚 REPERTORIO VISUAL DE CAZADORES (MENÚ)</h2>
-                <label>Filtrar y Clasificar Obras:</label>
+                <h2>📚 REPERTORIO GENERAL DE MANUSCRITOS PUBLICOS</h2>
+                <label>Filtrar por Género:</label>
                 <select id="filtroEstilo" onchange="filtrarHistorias()">
                     <option value="Todos">Ver Todos los Apartados</option>
-                    <option value="Fantasía Oscura">Apartado: Fantasía Oscura</option>
-                    <option value="Terror / Horror">Apartado: Terror / Horror</option>
-                    <option value="Acción / Marcial">Apartado: Acción / Marcial</option>
-                    <option value="Fanfiction">Apartado: Fanfiction</option>
+                    <option value="Fantasía Oscura">Fantasía Oscura</option>
+                    <option value="Terror / Horror">Terror / Horror</option>
+                    <option value="Acción / Marcial">Acción / Marcial</option>
+                    <option value="Fanfiction">Fanfiction</option>
                 </select>
                 <div class="menu-separador"></div>
                 <div id="estanteriaVisual" class="grid-historias"></div>
@@ -243,7 +250,7 @@
 
         <div id="secEscribir" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>📜 INYECTAR NUEVA ENTRADA AL TABLÓN</h2>
+                <h2>📜 INYECTAR NUEVA ENTRADA PÚBLICA</h2>
                 <input type="text" id="tituloHistoria" placeholder="Título del relato...">
                 <label>Estilo / Categoría Principal:</label>
                 <select id="estiloHistoria">
@@ -252,14 +259,18 @@
                     <option value="Acción / Marcial">Acción / Marcial</option>
                     <option value="Fanfiction">Fanfiction</option>
                 </select>
-                <textarea id="contenidoHistoria" rows="6" placeholder="Redacta las líneas de tu obra aquí..."></textarea>
+                <textarea id="contenidoHistoria" rows="6" placeholder="Redacta las líneas de tu obra pública aquí..."></textarea>
                 <button class="action-btn" id="btnPublicar">🚀 Publicar Obra en la Estantería (+15 EXP)</button>
             </div>
         </div>
 
+        <!-- SECCIÓN DE MAZMORRAS ACTUALIZADA -->
         <div id="secMazmorras" class="seccion-panel">
             <div class="caja-sistema">
-                <h2>👁️ RADAR DE CONVOCATORIAS ACTIVAS</h2>
+                <h2>👁️ ACCESO A PORTALES DE INCURSIÓN ACTIVOS (7 PORTALES)</h2>
+                <p style="font-size: 0.85em; color: #9ca3af; margin-bottom: 20px;">
+                    ⚠️ Las crónicas redactadas dentro de una incursión quedan selladas en esa mazmorra para siempre. Si el portal se cierra o no posees el rango de energía requerido, no podrás entrar.
+                </p>
                 <div id="tablonMazmorras"></div>
             </div>
         </div>
@@ -276,7 +287,7 @@
         <div id="pantallaLogs">⚠️ [SISTEMA] Interfaz sincronizada con la estantería rúnica.</div>
     </div>
 
-    <!-- PANTALLA FLOTANTE DE LECTURA DE MANUSCRITOS -->
+    <!-- PANTALLA FLOTANTE DE LECTURA -->
     <div id="modalLectura" class="modal-lectura">
         <div class="pantalla-pergamino">
             <div class="cabecera-pergamino">
@@ -284,9 +295,7 @@
                 <p>Escrito por: <span id="lecturaAutor">Cazador Anónimo</span> | Estilo: <span id="lecturaEstilo">-</span></p>
                 <button class="btn-cerrar-lectura" onclick="cerrarLectura()">❌ CERRAR</button>
             </div>
-            <div id="lecturaContenido" class="cuerpo-pergamino">
-                El contenido del manuscrito se inyectará aquí...
-            </div>
+            <div id="lecturaContenido" class="cuerpo-pergamino"></div>
         </div>
     </div>
 
