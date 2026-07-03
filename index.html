@@ -15,7 +15,7 @@
             overflow: hidden;
         }
         
-        /* CONTENEDOR DEL LOGO (NUEVO) */
+        /* CONTENEDOR DEL LOGO */
         .logo-contenedor {
             display: flex;
             flex-direction: column;
@@ -25,7 +25,6 @@
             margin-bottom: 20px;
             border-bottom: 1px dashed #374151;
         }
-        /* Logo estilo Emblema Neón */
         .logo-texto {
             font-size: 1.3em;
             font-weight: bold;
@@ -42,9 +41,6 @@
             margin-top: 5px;
             text-transform: uppercase;
         }
-        /* Por si en el futuro quieres usar una imagen, descomenta esto en tu CSS:
-        .logo-img { width: 80px; height: auto; margin-bottom: 8px; } 
-        */
 
         /* MENÚ LATERAL IZQUIERDO */
         .sidebar {
@@ -140,37 +136,57 @@
         .portada-terror { background: linear-gradient(135deg, #0b0f19 0%, #ff0055 100%); border-color: #ff0055; }
         .portada-accion { background: linear-gradient(135deg, #0b0f19 0%, #ffaa00 100%); border-color: #ffaa00; }
         .portada-fanfiction { background: linear-gradient(135deg, #0b0f19 0%, #00d2ff 100%); border-color: #00d2ff; }
+
+        /* INTERFAZ DE LECTURA REAL (NUEVO PANELES FLOTANTES) */
+        .modal-lectura {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(5, 7, 11, 0.95); z-index: 1000; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .modal-lectura.abierto { display: flex; }
+        .pantalla-pergamino {
+            background-color: #111827; border: 2px solid #00d2ff; width: 100%; max-width: 750px;
+            max-height: 85vh; border-radius: 8px; display: flex; flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+        }
+        .cabecera-pergamino {
+            padding: 20px; border-bottom: 1px dashed #374151; position: relative;
+        }
+        .cabecera-pergamino h2 { color: #fff; font-size: 1.5em; margin-bottom: 5px; text-transform: uppercase; }
+        .cabecera-pergamino p { color: #00d2ff; font-size: 0.9em; }
+        .btn-cerrar-lectura {
+            position: absolute; top: 20px; right: 20px; background: none; border: 1px solid #ff0055;
+            color: #ff0055; padding: 5px 12px; cursor: pointer; font-family: inherit; font-weight: bold;
+            border-radius: 4px; transition: all 0.3s;
+        }
+        .btn-cerrar-lectura:hover { background-color: #ff0055; color: #0b0f19; box-shadow: 0 0 10px #ff0055; }
+        .cuerpo-pergamino {
+            padding: 25px; overflow-y: auto; font-size: 1.1em; line-height: 1.8;
+            color: #e2e8f0; white-space: pre-wrap; font-family: 'Courier New', Courier, monospace;
+        }
     </style>
 </head>
 <body>
 
-    <!-- MENÚ LATERAL IZQUIERDO CON LOGO -->
+    <!-- MENÚ LATERAL IZQUIERDO -->
     <div class="sidebar">
-        <!-- SECCIÓN DEL LOGO -->
         <div class="logo-contenedor">
-            <!-- <img src="logo.png" class="logo-img" alt="Logo"> -->
             <div class="logo-texto">⚡ S.C.L ⚡</div>
             <div class="logo-subtexto">Gremio Alfa</div>
         </div>
-
         <button class="menu-btn activo" onclick="navegarA('secUsuario')">👤 Estado del Cazador</button>
         <button class="menu-btn" onclick="navegarA('secGremio')">🛡️ Gestión de Gremio</button>
-        
         <div class="menu-separador"></div>
-        
         <button class="menu-btn" onclick="navegarA('secCatalogo')">📚 Repertorio de Obras</button>
         <button class="menu-btn" onclick="navegarA('secCazadores')">🏹 Radar de Cazadores</button>
         <button class="menu-btn" onclick="navegarA('secEscribir')">✍️ Inyectar Manuscrito</button>
-        
         <div class="menu-separador"></div>
-        
         <button class="menu-btn" onclick="navegarA('secMazmorras')">⚔️ Portales de Incursión</button>
         <button class="menu-btn" onclick="navegarA('secMusica')">🎵 Aura de Concentración</button>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="main-content">
-        <!-- El resto de las pestañas se mantienen igual de funcionales -->
         <div id="secUsuario" class="seccion-panel activa">
             <div class="caja-sistema">
                 <h2>REGISTRO DE PODER ACTUAL</h2>
@@ -258,6 +274,20 @@
         </div>
 
         <div id="pantallaLogs">⚠️ [SISTEMA] Interfaz sincronizada con la estantería rúnica.</div>
+    </div>
+
+    <!-- PANTALLA FLOTANTE DE LECTURA DE MANUSCRITOS -->
+    <div id="modalLectura" class="modal-lectura">
+        <div class="pantalla-pergamino">
+            <div class="cabecera-pergamino">
+                <h2 id="lecturaTitulo">Título de la Obra</h2>
+                <p>Escrito por: <span id="lecturaAutor">Cazador Anónimo</span> | Estilo: <span id="lecturaEstilo">-</span></p>
+                <button class="btn-cerrar-lectura" onclick="cerrarLectura()">❌ CERRAR</button>
+            </div>
+            <div id="lecturaContenido" class="cuerpo-pergamino">
+                El contenido del manuscrito se inyectará aquí...
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
