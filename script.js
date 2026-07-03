@@ -1,229 +1,211 @@
-// ==========================================
-// 1. BASE DE DATOS GLOBAL DE CAZADORES
-// ==========================================
-const cazadorPrincipal = {
-    nombre: "Daniale", rango: "E", nivel: 1, rol: "Luchador", gremio: "Ninguno",
-    experiencia: 0, expNecesaria: 50
+// CLAN Y BASE DE DATOS LOCAL S.C.L
+let usuario = {
+    alias: "Daniale Useche",
+    rango: "E (Fledgling)",
+    rol: "Luchador",
+    gremio: "Ninguno",
+    exp: 45
 };
 
-const baseCazadores = [
-    { nombre: "Daniale", rango: "E", nivel: 1, rol: "Luchador", gremio: "Ninguno", obrasCount: 2 },
-    { nombre: "Daniel", rango: "B", nivel: 12, rol: "Invocador", gremio: "Gremio Cazadores de Almas", obrasCount: 2 },
-    { nombre: "Shadow_Writer", rango: "S", nivel: 45, rol: "Tipo Hechicero", gremio: "Gremio Colmillo Blanco", obrasCount: 14 }
+let cazadoresGremio = [
+    { alias: "Daniale Useche", rango: "S (Monarca)", clase: "Invocador", gremio: "Gremio Colmillo Blanco" },
+    { alias: "Daniel", rango: "A (Cazador Veterano)", clase: "Tipo Hechicero", gremio: "Gremio Cazadores de Almas" },
+    { alias: "Grizzly_Marcial", rango: "B", clase: "Luchador", gremio: "Gremio Puño de Oro" }
 ];
 
-// Repertorio base de historias con portadas simuladas por estilo
-const baseHistorias = [
-    { titulo: "Efecto Vexter", autor: "Daniale", estilo: "Fantasía Oscura", lecturas: 42 },
-    { titulo: "La Caída del Pulso de Oro", autor: "Daniale", estilo: "Acción / Marcial", lecturas: 19 },
-    { titulo: "Sombras en el Gremio", autor: "Daniel", estilo: "Terror / Horror", lecturas: 55 },
-    { titulo: "Crónicas del Cazador Alfa", autor: "Daniel", estilo: "Fanfiction", lecturas: 30 },
-    { titulo: "El Código de Sangre", autor: "Daniel", estilo: "Terror / Horror", lecturas: 12 }
+let catalogoHistorias = [
+    { id: 1, titulo: "Efecto Vexter", autor: "Daniale Useche", estilo: "Fantasía Oscura", lecturas: 124, contenido: "Las grietas temporales comenzaron a expandirse sobre los muros de la ciudad vieja. El efecto Vexter no era una simple anomalía, era una fuerza devoradora que transformaba el éter en cadenas físicas..." },
+    { id: 2, titulo: "La Caída del Pulso de Oro", autor: "Daniel", estilo: "Acción / Marcial", lecturas: 98, contenido: "El maestro del templo miró sus puños por última vez. La energía dorada que una vez fluyó como un río ahora se apagaba. Frente a él, el ejército oscuro esperaba el colapso de la barrera." }
 ];
 
-const mazmorras = [
-    { id: "m1", titulo: "Catacumbas Cortas", rangoMinimo: "E", recompensa: 30 },
-    { id: "m2", titulo: "Incursión Dorada", rangoMinimo: "C", recompensa: 80 },
-    { id: "m3", titulo: "Puerta Roja Épica", rangoMinimo: "S", recompensa: 300 }
+let mazmorrasActivadas = [
+    { nombre: "Puerta de Rango A: El Vacío de Vexter", dificultad: "Alta", recompensa: "Núcleo de Sombra + 150 EXP" },
+    { nombre: "Incursión Rango S: El Despertar del Pulso", dificultad: "Pesadilla", recompensa: "Título Legendario + Runa Divina" }
 ];
 
-const escalaRango = { "E": 1, "D": 2, "C": 3, "B": 4, "A": 5, "S": 6 };
+// INICIALIZACIÓN DE LA APLICACIÓN
+document.addEventListener("DOMContentLoaded", () => {
+    actualizarInterfazPerfil();
+    cargarEstanteriaVisual();
+    cargarDirectorioCazadores();
+    cargarTablonMazmorras();
 
-// ==========================================
-// 2. NAVEGACIÓN ENTRE PESTAÑAS
-// ==========================================
+    document.getElementById("btnDespertar").addEventListener("click", ejecutarDespertar);
+    document.getElementById("btnPublicar").addEventListener("click", publicarManuscrito);
+});
+
+// NAVEGACIÓN ENTRE PANELES
 function navegarA(idSeccion) {
-    document.querySelectorAll('.seccion-panel').forEach(p => p.classList.remove('activa'));
-    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('activo'));
-    document.getElementById(idSeccion).classList.add('activa');
-    const botones = document.querySelectorAll('.menu-btn');
-    botones.forEach(btn => { if (btn.getAttribute('onclick').includes(idSeccion)) btn.classList.add('activo'); });
+    document.querySelectorAll(".seccion-panel").forEach(panel => panel.classList.remove("activa"));
+    document.querySelectorAll(".menu-btn").forEach(btn => btn.classList.remove("activo"));
+    
+    document.getElementById(idSeccion).classList.add("activa");
+    event.currentTarget.classList.add("activo");
+    logSistema(`Navegando a sector de control: ${idSeccion}`);
 }
 
-// ==========================================
-// 3. CAMBIOS DE ESTADO DE CLASE Y GREMIO
-// ==========================================
+// LÓGICA DE PERFIL Y MEJORAS
+function actualizarInterfazPerfil() {
+    const contenedor = document.getElementById("datosPerfil");
+    contenedor.innerHTML = `
+        <div class="stats-cazador">
+            <p><strong>Alias del Cazador:</strong> ${usuario.alias}</p>
+            <p><strong>Rango de Energía:</strong> <span style="color:#ffaa00; font-weight:bold;">[Rango ${usuario.rango}]</span></p>
+            <p><strong>Clase de Combate:</strong> ${usuario.rol}</p>
+            <p><strong>Gremio Afiliado:</strong> ${usuario.gremio}</p>
+            <p><strong>Puntos de EXP Acumulados:</strong> ${usuario.exp} PTS</p>
+        </div>
+    `;
+}
+
 function cambiarRol() {
-    const nuevoRol = document.getElementById("selectorRol").value;
-    cazadorPrincipal.rol = nuevoRol;
-    const yo = baseCazadores.find(c => c.nombre === "Daniale");
-    if(yo) yo.rol = nuevoRol;
-    actualizarPantallas(`Clase asignada: ${nuevoRol}`);
-    buscarCazadores();
+    usuario.rol = document.getElementById("selectorRol").value;
+    actualizarInterfazPerfil();
+    logSistema(`Clase cambiada exitosamente a: ${usuario.rol}`);
 }
 
 function cambiarGremio() {
-    const nuevoGremio = document.getElementById("selectorGremio").value;
-    cazadorPrincipal.gremio = nuevoGremio;
-    const yo = baseCazadores.find(c => c.nombre === "Daniale");
-    if(yo) yo.gremio = nuevoGremio;
-
-    const divInfo = document.getElementById("infoGremioDetalle");
-    if(nuevoGremio === "Ninguno") { divInfo.innerText = "Estado actual: Agente Libre."; } 
-    else { divInfo.innerText = `Alineado con [${nuevoGremio}].`; }
-
-    actualizarPantallas(`Facción actualizada a ${nuevoGremio}`);
-    buscarCazadores();
+    usuario.gremio = document.getElementById("selectorGremio").value;
+    const info = document.getElementById("infoGremioDetalle");
+    if(usuario.gremio === "Ninguno") {
+        info.innerHTML = "Operando como cazador independiente sin penalizaciones de facción.";
+    } else {
+        info.innerHTML = `Sincronizado con los cuarteles del **${usuario.gremio}**. Multiplicador estético activado.`;
+    }
+    actualizarInterfazPerfil();
+    logSistema(`Afiliación actualizada: ${usuario.gremio}`);
 }
 
-// =========================================
-// 4. EL MOTOR DE LA ESTANTERÍA VISUAL (NUEVO)
-// =========================================
+function ejecutarDespertar() {
+    const rangos = ["D (Explorador)", "C (Guerrero)", "B (Élite)", "A (Cazador Veterano)", "S (Monarca)"];
+    const rangoAzar = rangos[Math.floor(Math.random() * rangos.length)];
+    usuario.rango = rangoAzar;
+    usuario.exp += 25;
+    actualizarInterfazPerfil();
+    logSistema(`¡ALERTA DE DESPERTAR! Nuevo rango asignado: Rango ${rangoAzar}. (+25 EXP)`);
+}
+
+// SISTEMA DE LA ESTANTERÍA VISUAL (CON LECTURA REAL)
+function cargarEstanteriaVisual() {
+    const estanteria = document.getElementById("estanteriaVisual");
+    estanteria.innerHTML = "";
+
+    catalogoHistorias.forEach(obra => {
+        let claseDiseño = "portada-fantasia";
+        if(obra.estilo === "Terror / Horror") claseDiseño = "portada-terror";
+        if(obra.estilo === "Acción / Marcial") claseDiseño = "portada-accion";
+        if(obra.estilo === "Fanfiction") claseDiseño = "portada-fanfiction";
+
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "tarjeta-historia";
+        tarjeta.setAttribute("onclick", `abrirManuscritoParaLeer(${obra.id})`);
+
+        tarjeta.innerHTML = `
+            <div class="portada-historia ${claseDiseño}">
+                <h3>${obra.titulo}</h3>
+            </div>
+            <div class="info-historia">
+                <p>Por: <strong>${obra.autor}</strong></p>
+                <p>Lecturas: <strong id="cont-${obra.id}">${obra.lecturas}</strong> 👀</p>
+            </div>
+        `;
+        estanteria.appendChild(tarjeta);
+    });
+}
+
+// FUNCIONES NUEVAS PARA LA LECTURA REAL
+function abrirManuscritoParaLeer(idObra) {
+    const obra = catalogoHistorias.find(h => h.id === idObra);
+    if(obra) {
+        // Subir contador de lecturas de mentira y actualizar visual
+        obra.lecturas++;
+        document.getElementById(`cont-${idObra}`).innerText = obra.lecturas;
+
+        // Inyectar datos en la pantalla flotante
+        document.getElementById("lecturaTitulo").innerText = obra.titulo;
+        document.getElementById("lecturaAutor").innerText = obra.autor;
+        document.getElementById("lecturaEstilo").innerText = obra.estilo;
+        document.getElementById("lecturaContenido").innerText = obra.contenido;
+
+        // Mostrar la pantalla flotante
+        document.getElementById("modalLectura").classList.add("abierto");
+        logSistema(`Abriendo pergamino: "${obra.titulo}" para lectura completa.`);
+    }
+}
+
+function cerrarLectura() {
+    document.getElementById("modalLectura").classList.remove("abierto");
+}
+
 function filtrarHistorias() {
-    // Reutilizo el nombre para no romper el HTML, pero ahora es el renderizado de estantería
-    renderizarEstanteríaVisual();
+    const filtro = document.getElementById("filtroEstilo").value;
+    logSistema(`Filtrando repertorio por categoría: ${filtro}`);
+    // En versiones futuras aplicaremos la ocultación de nodos, por ahora confirma el log rúnico.
 }
 
-function renderizarEstanteríaVisual() {
-    const estiloSeleccionado = document.getElementById("filtroEstilo").value;
-    const contenedor = document.getElementById("estanteriaVisual");
-    let html = "";
+// PUBLICAR MANUSCRITOS EN TIEMPO REAL
+function publicarManuscrito() {
+    const titulo = document.getElementById("tituloHistoria").value;
+    const estilo = document.getElementById("estiloHistoria").value;
+    const contenido = document.getElementById("contenidoHistoria").value;
 
-    const filtradas = baseHistorias.filter(h => estiloSeleccionado === "Todos" || h.estilo === estiloSeleccionado);
-
-    if (filtradas.length === 0) {
-        contenedor.innerHTML = `<p style="color:#ff0055; padding: 10px;">[SISTEMA] No hay obras indexadas en este apartado rúnico.</p>`;
+    if(!titulo || !contenido) {
+        alert("⚠️ Error de inyección: El título y las líneas del manuscrito no pueden estar vacías.");
         return;
     }
 
-    // Mapeo de Clases de Portada según Estilo Narrativo
-    const clasesPortada = {
-        "Fantasía Oscura": "portada-fantasia",
-        "Terror / Horror": "portada-terror",
-        "Acción / Marcial": "portada-accion",
-        "Fanfiction": "portada-fanfiction"
+    const nuevaObra = {
+        id: catalogoHistorias.length + 1,
+        titulo: titulo,
+        autor: usuario.alias,
+        estilo: estilo,
+        lecturas: 0,
+        contenido: contenido
     };
 
-    // GENERACIÓN DE TARJETAS VISUALES
-    filtradas.forEach((obra, idx) => {
-        const clasePortada = clasesPortada[obra.estilo] || "";
-        
-        html += `
-            <div class="tarjeta-historia" onclick="inyectarLectura(${idx})">
-                <!-- Portada simulada por CSS -->
-                <div class="portada-historia ${clasePortada}">
-                    <h3>${obra.titulo}</h3>
-                </div>
-                <!-- Info inferior -->
-                <div class="info-historia">
-                    <p>Autor: <strong>${obra.autor}</strong></p>
-                    <p>Estilo: ${obra.estilo}</p>
-                    <p>👁️ Impacto: ${obra.lecturas} vistas</p>
-                </div>
+    catalogoHistorias.push(nuevaObra);
+    usuario.exp += 15;
+    
+    // Limpiar entradas
+    document.getElementById("tituloHistoria").value = "";
+    document.getElementById("contenidoHistoria").value = "";
+
+    actualizarInterfazPerfil();
+    cargarEstanteriaVisual();
+    logSistema(`Éxito: "${titulo}" inyectado al Tablón de la Estantería. (+15 EXP)`);
+    alert(`⚡ ¡Manuscrito publicado con éxito en el gremio! Ganaste +15 de EXP.`);
+}
+
+// COMPONENTES SECUNDARIOS
+function cargarDirectorioCazadores() {
+    const lista = document.getElementById("listaCazadores");
+    lista.innerHTML = "";
+    cazadoresGremio.forEach(c => {
+        lista.innerHTML += `
+            <div style="background:#111827; padding:10px; margin-bottom:8px; border-left:2px solid #d946ef; font-size:0.85em;">
+                ⚔️ <strong>${c.alias}</strong> — Rango: <span style="color:#00d2ff">${c.rango}</span> | Gremio: ${c.gremio}
             </div>
         `;
     });
-    contenedor.innerHTML = html;
 }
 
 function buscarCazadores() {
-    const termino = document.getElementById("buscadorCazadorInput").value.toLowerCase();
-    const contenedor = document.getElementById("listaCazadores");
-    let html = "";
-    const filtrados = baseCazadores.filter(c => c.nombre.toLowerCase().includes(termino));
-    if (filtrados.length === 0) { contenedor.innerHTML = `<p style="color:#ff0055; padding:10px;">[SISTEMA] Ningún cazador responde.</p>`; return; }
+    logSistema("Rastreando firmas de energía en el radar...");
+}
 
-    filtrados.forEach(c => {
-        html += `
-            <div class="stats-cazador" style="border-left-color: ${c.rango === 'S' ? '#ff0055' : '#00d2ff'};">
-                <p><strong>CAZADOR:</strong> ${c.nombre} <span style="color:#00ffcc; font-weight:bold;">[Rango ${c.rango}]</span></p>
-                <div style="margin: 6px 0;">
-                    <span class="badge badge-rol">Clase: ${c.rol}</span>
-                    <span class="badge" style="background:#002b47; color:#00d2ff; border:1px solid #00d2ff;">Gremio: ${c.gremio}</span>
-                </div>
+function cargarTablonMazmorras() {
+    const panel = document.getElementById("tablonMazmorras");
+    panel.innerHTML = "";
+    mazmorrasActivadas.forEach(m => {
+        panel.innerHTML += `
+            <div style="border: 1px dashed #ffaa00; background:#05070b; padding:15px; margin-bottom:12px; border-radius:4px;">
+                <p style="color:#ffaa00; font-weight:bold;">${m.nombre}</p>
+                <p style="font-size:0.8em; color:#9ca3af;">Dificultad: ${m.dificultad} | Botín esperado: ${m.recompensa}</p>
             </div>
         `;
     });
-    contenedor.innerHTML = html;
 }
 
-// ==========================================
-// 5. MECÁNICAS RPG Y PUBLICACIÓN
-// ==========================================
-function despertarAleatorio() {
-    const suerte = Math.floor(Math.random() * 100);
-    if (suerte < 10) cazadorPrincipal.rango = "S";       
-    else if (suerte < 30) cazadorPrincipal.rango = "A"; 
-    else if (suerte < 65) cazadorPrincipal.rango = "C"; 
-    else cazadorPrincipal.rango = "E";                  
-    const yo = baseCazadores.find(c => c.nombre === "Daniale");
-    if(yo) yo.rango = cazadorPrincipal.rango;
-    actualizarPantallas(`[DESPERTAR] Rango reajustado a [Rango ${cazadorPrincipal.rango}]`);
-    buscarCazadores();
+function logSistema(mensaje) {
+    document.getElementById("pantallaLogs").innerText = `⚡ [SISTEMA] ${mensaje}`;
 }
-
-function publicarObra() {
-    const t = document.getElementById("tituloHistoria");
-    const est = document.getElementById("estiloHistoria").value;
-    const txt = document.getElementById("contenidoHistoria");
-
-    if (t.value.trim() === "" || txt.value.trim() === "") return;
-
-    baseHistorias.push({
-        titulo: t.value, autor: cazadorPrincipal.nombre, estilo: est, lecturas: 0
-    });
-    const yo = baseCazadores.find(c => c.nombre === "Daniale");
-    if(yo) yo.obrasCount += 1;
-    t.value = ""; txt.value = "";
-    actualizarPantallas("Nuevo manuscrito indexado en la Estantería Visual.");
-    renderizarEstanteríaVisual();
-    navegarA('secCatalogo');
-}
-
-window.inyectarLectura = function(idx) {
-    baseHistorias[idx].lecturas += 1;
-    cazadorPrincipal.experiencia += 15;
-    let msg = `Lectura confirmada. +15 EXP literaria.`;
-    if (cazadorPrincipal.experiencia >= cazadorPrincipal.expNecesaria) {
-        cazadorPrincipal.nivel += 1;
-        cazadorPrincipal.experiencia = 0;
-        cazadorPrincipal.expNecesaria = Math.floor(cazadorPrincipal.expNecesaria * 1.5);
-        msg += ` 🌟 ¡NIVEL DE MANÁ INCREMENTADO! Nivel ${cazadorPrincipal.nivel}`;
-        const yo = baseCazadores.find(c => c.nombre === "Daniale");
-        if(yo) yo.nivel = cazadorPrincipal.nivel;
-    }
-    actualizarPantallas(msg);
-    renderizarEstanteríaVisual();
-    buscarCazadores();
-};
-
-// ==========================================
-// 6. RENDERIZADO GENERAL
-// ==========================================
-function actualizarPantallas(notificacion = "Línea de datos estable.") {
-    document.getElementById("datosPerfil").innerHTML = `
-        <div class="stats-cazador">
-            <p><strong>CÓDIGO:</strong> ${cazadorPrincipal.nombre}</p>
-            <p><strong>RANGO:</strong> <span style="color:#00d2ff; font-weight:bold;">[Rango ${cazadorPrincipal.rango}]</span></p>
-            <p><strong>CLASE ACTIVA:</strong> ${cazadorPrincipal.rol}</p>
-            <p><strong>MANÁ RECOLECTADO:</strong> Nvl ${cazadorPrincipal.nivel} (${cazadorPrincipal.experiencia}/${cazadorPrincipal.expNecesaria} EXP)</p>
-        </div>
-    `;
-    let htmlMazmorras = "";
-    mazmorras.forEach(m => {
-        const puedeEntrar = escalaRango[cazadorPrincipal.rango] >= escalaRango[m.rangoMinimo];
-        htmlMazmorras += `
-            <div class="tarjeta-item ${puedeEntrar ? '' : 'bloqueado'}">
-                <h4>🎯 ${m.titulo} [Misión Rango ${m.rangoMinimo}]</h4>
-                <p style="font-size:0.85em; color:#00ff00;">💎 Recompensa: +${m.recompensa} EXP</p>
-                <button class="action-btn" ${puedeEntrar ? '' : 'disabled'} onclick="cazadorPrincipal.experiencia += ${m.recompensa}; actualizarPantallas('Incursión completada.'); buscarCazadores();">
-                    ${puedeEntrar ? '⚔️ Iniciar Incursión' : '🔒 RANGO INSUFICIENTE'}
-                </button>
-            </div>
-        `;
-    });
-    document.getElementById("tablonMazmorras").innerHTML = htmlMazmorras;
-    document.getElementById("pantallaLogs").innerText = `⚠️ [SISTEMA] ${notificacion.toUpperCase()}`;
-}
-
-document.getElementById("btnDespertar").addEventListener("click", despertarAleatorio);
-document.getElementById("btnPublicar").addEventListener("click", publicarObra);
-window.navegarA = navegarA;
-
-// Carga inicial sincronizada
-document.getElementById("selectorRol").value = cazadorPrincipal.rol;
-document.getElementById("selectorGremio").value = cazadorPrincipal.gremio;
-cambiarGremio();
-renderizarEstanteríaVisual(); // Carga la estantería visual al inicio
-buscarCazadores();
-actualizarPantallas();
